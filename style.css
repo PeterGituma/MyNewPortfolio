@@ -367,18 +367,13 @@ article .icon {
   align-items: center;
 }
 
-.project-img {
+.project-img, .project-imggg {
   border-radius: 2rem;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 300px; /* Set a fixed height for all images */
   object-fit: cover;
 }
-.project-imggg {
-  border-radius: 2rem;
-  max-width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
+
 
 .project-title {
   margin: 1rem 0;
