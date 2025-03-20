@@ -11,6 +11,16 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+.company-logo {
+  width: 230px; /* Increased width */
+  height: 230px; /* Increased height */
+  object-fit: contain; /* Ensures the image is fully visible */
+  display: block;
+  margin: 0 auto 15px; /* Centers the logo with extra spacing */
+}
+
+
+
 html {
   scroll-behavior: smooth;
 }
