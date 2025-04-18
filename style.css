@@ -456,3 +456,20 @@ footer {
 footer p {
   text-align: center;
 }
+
+.projects-scroll-container {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1rem 0;
+}
+
+.scroll-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+}
+#projects .details-container {
+  flex: 0 0 auto;
+  width: 300px; /* Adjust to fit your card size */
+}
+
