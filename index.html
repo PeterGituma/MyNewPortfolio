@@ -1,529 +1,1542 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="mediaqueries.css" />
-  </head>
-  <body>
-    <nav id="desktop-nav">
-      <div class="logo">Peter Gituma</div>
-      <div>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Peter Gituma — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #07091a;
+    --bg2: #0b0e28;
+    --surface: rgba(80,120,255,0.07);
+    --border: rgba(80,180,255,0.30);
+    --cyan: #38d9ff;
+    --cyan2: #a0ffea;
+    --accent: #ff2d78;
+    --accent2: #ffe03a;
+    --purple: #b06bff;
+    --text: #e8f4ff;
+    --muted: #6a9ab8;
+    --glow: 0 0 22px rgba(56,217,255,0.7);
+    --glow2: 0 0 40px rgba(56,217,255,0.35);
+    --glow-accent: 0 0 22px rgba(255,45,120,0.6);
+    --glow-purple: 0 0 22px rgba(176,107,255,0.6);
+    --font-display: 'Orbitron', monospace;
+    --font-ui: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(56,100,255,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(176,107,255,0.10) 0%, transparent 60%);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed; top: 0; left: 0; z-index: 9999;
+    pointer-events: none;
+    width: 12px; height: 12px;
+    background: var(--cyan);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: var(--glow);
+  }
+  #cursor-ring {
+    position: fixed; top: 0; left: 0; z-index: 9998;
+    pointer-events: none;
+    width: 36px; height: 36px;
+    border: 1px solid var(--cyan);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+  body:hover #cursor { transform: translate(-50%,-50%) scale(1); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
+
+  /* CANVAS */
+  #canvas-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* SCANLINES OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.03) 0px,
+      rgba(0,0,0,0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  /* NOISE OVERLAY */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  /* LAYOUT */
+  .container {
+    position: relative; z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(2,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom-color: var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--cyan);
+    text-decoration: none;
+    letter-spacing: 3px;
+    text-shadow: var(--glow);
+    filter: brightness(1.2);
+  }
+  .nav-logo span { color: var(--accent); text-shadow: var(--glow-accent); }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #9dc8e8;
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--accent2);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .nav-links a:hover { color: var(--cyan); text-shadow: var(--glow); }
+  .nav-links a:hover::before { opacity: 1; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 100px 0 60px;
+    position: relative;
+  }
+  .hero-content { max-width: 750px; }
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--cyan);
+    box-shadow: var(--glow);
+  }
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .hero-name .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .hero-name .glitch::before,
+  .hero-name .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .hero-name .glitch::before {
+    color: var(--cyan);
+    text-shadow: -2px 0 var(--accent);
+    clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+    animation: glitch1 4s infinite;
+  }
+  .hero-name .glitch::after {
+    color: var(--purple);
+    text-shadow: 2px 0 var(--accent2);
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch2 4s infinite;
+  }
+  @keyframes glitch1 {
+    0%,90%,100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px,1px); opacity: 1; }
+    94% { transform: translate(2px,-1px); opacity: 1; }
+    96% { transform: translate(0); opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%,88%,100% { transform: translate(0); opacity: 0; }
+    90% { transform: translate(3px,-1px); opacity: 1; }
+    92% { transform: translate(-2px,1px); opacity: 1; }
+    94% { transform: translate(0); opacity: 0; }
+  }
+
+  .hero-role {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--accent2);
+    text-shadow: 0 0 16px rgba(255,224,58,0.5);
+    margin-bottom: 24px;
+    height: 2rem;
+  }
+  #typewriter::after {
+    content: '|';
+    animation: blink 0.8s infinite;
+    color: var(--accent);
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-bio {
+    font-family: var(--font-ui);
+    font-size: 1.05rem;
+    color: var(--text);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 44px;
+    opacity: 0.8;
+  }
+
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border-radius: 0;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: #fff;
+    font-weight: 700;
+    text-shadow: none;
+    box-shadow: 0 0 20px rgba(56,217,255,0.4), 0 0 40px rgba(176,107,255,0.2);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #fff 0%, var(--cyan2) 100%);
+    color: #07091a;
+    box-shadow: var(--glow), 0 0 60px rgba(160,255,234,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    text-shadow: var(--glow);
+  }
+  .btn-ghost:hover {
+    background: rgba(56,217,255,0.12);
+    box-shadow: var(--glow), inset 0 0 20px rgba(56,217,255,0.08);
+    transform: translateY(-2px);
+    color: #fff;
+  }
+
+  .hero-stats {
+    position: absolute; right: 0; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .stat-item {
+    text-align: right;
+    border-right: 2px solid var(--cyan);
+    padding-right: 20px;
+    box-shadow: 4px 0 30px rgba(56,217,255,0.2);
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cyan);
+    text-shadow: var(--glow);
+    display: block;
+    line-height: 1;
+    filter: brightness(1.3);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: #8ad4f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+    animation: scrollpulse 2s infinite;
+  }
+  @keyframes scrollpulse {
+    0%,100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* SECTIONS COMMON */
+  section { padding: 120px 0; position: relative; z-index: 2; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent2);
+    text-shadow: 0 0 12px rgba(255,224,58,0.5);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 60px;
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(255,255,255,0.08);
+  }
+  .section-title span { color: var(--cyan); text-shadow: var(--glow); filter: brightness(1.2); }
+
+  /* DIVIDER */
+  .hex-divider {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .hex-divider::before, .hex-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, var(--border));
+  }
+  .hex-divider::before { background: linear-gradient(to left, transparent, var(--border)); }
+
+  /* ABOUT */
+  #about { background: linear-gradient(180deg, transparent 0%, rgba(0,200,255,0.02) 50%, transparent 100%); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text p {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0.85;
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+  .about-cards {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .info-card {
+    border: 1px solid var(--border);
+    background: rgba(30,60,120,0.15);
+    padding: 28px;
+    position: relative;
+    transition: all 0.4s;
+    clip-path: polygon(12px 0, 100% 0, calc(100%-12px) 100%, 0 100%);
+  }
+  .info-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--cyan), var(--purple));
+    box-shadow: var(--glow);
+  }
+  .info-card:hover {
+    background: rgba(56,217,255,0.10);
+    border-color: var(--cyan);
+    transform: translateX(6px);
+    box-shadow: var(--glow2);
+  }
+  .info-card-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(255,224,58,0.4);
+  }
+  .info-card-value {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+  }
+  .info-card-sub {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: #9dc8e8;
+    margin-top: 4px;
+  }
+
+  /* SKILLS */
+  #skills { }
+  .skills-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px;
+  }
+  .skill-group-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,45,120,0.3);
+    text-shadow: var(--glow-accent);
+  }
+  .skill-item {
+    margin-bottom: 20px;
+  }
+  .skill-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .skill-name {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: #e8f4ff;
+    letter-spacing: 1px;
+  }
+  .skill-level {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan2);
+    text-shadow: 0 0 8px rgba(160,255,234,0.5);
+  }
+  .skill-bar-bg {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--cyan), var(--cyan2));
+    box-shadow: 0 0 12px var(--cyan), 0 0 24px rgba(176,107,255,0.4);
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+  .skill-bar-fill::after {
+    content: '';
+    position: absolute; right: 0; top: -4px;
+    width: 10px; height: 10px;
+    background: var(--cyan2);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan2), 0 0 24px var(--cyan);
+  }
+
+  /* TOOLS GRID */
+  .tools-grid {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: 16px;
+  }
+  .tool-chip {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan2);
+    border: 1px solid rgba(56,217,255,0.35);
+    padding: 6px 14px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    clip-path: polygon(6px 0, 100% 0, calc(100%-6px) 100%, 0 100%);
+    background: rgba(56,217,255,0.06);
+    text-shadow: 0 0 8px rgba(160,255,234,0.4);
+  }
+  .tool-chip:hover {
+    background: rgba(56,217,255,0.18);
+    border-color: var(--cyan);
+    box-shadow: var(--glow), 0 0 20px rgba(176,107,255,0.3);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* EXPERIENCE */
+  #experience {
+    background: linear-gradient(180deg, transparent 0%, rgba(0,200,255,0.02) 50%, transparent 100%);
+  }
+  .timeline { position: relative; padding-left: 40px; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--cyan), var(--purple), transparent);
+    box-shadow: var(--glow);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 60px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s;
+  }
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .timeline-dot {
+    position: absolute; left: -48px; top: 6px;
+    width: 14px; height: 14px;
+    background: var(--bg);
+    border: 2px solid var(--cyan);
+    border-radius: 50%;
+    box-shadow: var(--glow), 0 0 20px rgba(176,107,255,0.5);
+  }
+  .timeline-dot::after {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 5px; height: 5px;
+    background: var(--cyan2);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--cyan2);
+  }
+  .timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    text-shadow: var(--glow-accent);
+  }
+  .timeline-company {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.15);
+  }
+  .timeline-role {
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: var(--glow);
+  }
+  .timeline-desc {
+    font-size: 0.95rem;
+    color: #c0daf0;
+    line-height: 1.8;
+    max-width: 600px;
+  }
+  .timeline-card {
+    border: 1px solid var(--border);
+    background: rgba(20,40,100,0.2);
+    padding: 28px 32px;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .timeline-card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 40px; height: 40px;
+    border-top: 2px solid var(--cyan);
+    border-right: 2px solid var(--cyan);
+    transition: all 0.3s;
+    box-shadow: 4px -4px 16px rgba(56,217,255,0.3);
+  }
+  .timeline-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    width: 40px; height: 40px;
+    border-bottom: 2px solid rgba(176,107,255,0.4);
+    border-left: 2px solid rgba(176,107,255,0.4);
+    transition: all 0.3s;
+  }
+  .timeline-card:hover {
+    border-color: var(--cyan);
+    background: rgba(56,217,255,0.07);
+    box-shadow: var(--glow2), 0 0 60px rgba(176,107,255,0.1);
+  }
+  .timeline-card:hover::after {
+    border-color: var(--purple);
+    box-shadow: -4px 4px 16px rgba(176,107,255,0.4);
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .project-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.4s;
+    cursor: none;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .project-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .project-card:hover {
+    border-color: var(--cyan);
+    box-shadow: var(--glow2), 0 0 60px rgba(176,107,255,0.15);
+    transform: translateY(-6px);
+  }
+  .project-img-wrap {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+  .project-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) brightness(0.75) saturate(1.3);
+    transition: all 0.5s;
+  }
+  .project-card:hover .project-img-wrap img {
+    filter: grayscale(0%) brightness(0.9) saturate(1.5);
+    transform: scale(1.05);
+  }
+  .project-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 30%, rgba(7,9,26,0.95) 100%);
+  }
+  .project-num {
+    position: absolute; top: 16px; right: 16px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    color: var(--cyan2);
+    background: rgba(0,0,0,0.7);
+    padding: 4px 10px;
+    border: 1px solid rgba(56,217,255,0.4);
+    letter-spacing: 2px;
+    text-shadow: var(--glow);
+  }
+  .project-body {
+    padding: 24px;
+  }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+  .project-desc {
+    font-size: 0.85rem;
+    color: #8abbd4;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .project-links {
+    display: flex; gap: 10px;
+  }
+  .project-link {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    border: 1px solid rgba(56,217,255,0.35);
+    padding: 6px 14px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    clip-path: polygon(5px 0, 100% 0, calc(100%-5px) 100%, 0 100%);
+    text-shadow: var(--glow);
+  }
+  .project-link:hover {
+    background: rgba(56,217,255,0.15);
+    border-color: var(--cyan);
+    box-shadow: var(--glow);
+    color: #fff;
+  }
+
+  /* CONTACT */
+  #contact {
+    background: linear-gradient(180deg, transparent 0%, rgba(0,200,255,0.03) 100%);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact-info p {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0.8;
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+  .contact-links { display: flex; flex-direction: column; gap: 16px; }
+  .contact-link {
+    display: flex; align-items: center; gap: 16px;
+    text-decoration: none;
+    color: #c0daf0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    background: rgba(20,50,120,0.15);
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+  .contact-link:hover {
+    border-color: var(--cyan);
+    color: var(--cyan2);
+    background: rgba(56,217,255,0.08);
+    transform: translateX(6px);
+    box-shadow: var(--glow2);
+    text-shadow: 0 0 10px rgba(160,255,234,0.4);
+  }
+  .contact-link-icon {
+    font-size: 1.2rem;
+    color: var(--cyan);
+    text-shadow: var(--glow);
+    filter: brightness(1.3);
+  }
+  .contact-form {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .form-group { position: relative; }
+  .form-group label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    padding: 14px 18px;
+    outline: none;
+    transition: all 0.3s;
+    resize: none;
+    cursor: none;
+    caret-color: var(--cyan);
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--cyan);
+    background: rgba(0,200,255,0.04);
+    box-shadow: 0 0 0 1px rgba(0,200,255,0.1);
+  }
+  .form-group textarea { height: 130px; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 2;
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-shadow: var(--glow);
+  }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* REVEAL ANIMATION */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* CORNER BRACKETS DECORATOR */
+  .bracket-box {
+    position: relative;
+    padding: 2px;
+  }
+  .bracket-box::before, .bracket-box::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+  }
+  .bracket-box::before {
+    top: 0; left: 0;
+    border-top: 2px solid var(--cyan);
+    border-left: 2px solid var(--cyan);
+  }
+  .bracket-box::after {
+    bottom: 0; right: 0;
+    border-bottom: 2px solid var(--cyan);
+    border-right: 2px solid var(--cyan);
+  }
+
+  /* LOCATION CHIP */
+  .location-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 12px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .location-dot {
+    width: 6px; height: 6px;
+    background: var(--cyan2);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--cyan2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.7; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-stats { display: none; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .projects-grid { grid-template-columns: repeat(2, 1fr); }
+    .skills-wrapper { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 20px; }
+    .nav-links { gap: 20px; }
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+
+  /* HEXAGON DECORATIVE BG SHAPES */
+  .hero-hex {
+    position: absolute;
+    right: -100px; top: 50%;
+    transform: translateY(-50%);
+    width: 500px; height: 500px;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  /* TERMINAL BLOCK */
+  .terminal {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+    padding: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    position: relative;
+    margin-top: 32px;
+  }
+  .terminal::before {
+    content: '● ● ●';
+    position: absolute; top: 10px; left: 16px;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 4px;
+  }
+  .terminal-content {
+    margin-top: 16px;
+    line-height: 2;
+  }
+  .terminal-content .prompt { color: var(--cyan); }
+  .terminal-content .output { color: var(--text); opacity: 0.7; }
+  .terminal-content .highlight { color: var(--cyan2); }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- CANVAS BACKGROUND -->
+<canvas id="canvas-bg"></canvas>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">PG<span>.</span>DEV</a>
+      <ul class="nav-links">
+        <li><a href="#about">about</a></li>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#experience">experience</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag">Initializing Portfolio_v2025</div>
+      <div class="hero-name">
+        <span class="glitch" data-text="Peter">Peter</span><br/>
+        <span class="glitch" data-text="Gituma">Gituma</span>
       </div>
-    </nav>
-    <nav id="hamburger-nav">
-      <div class="logo">Peter Gituma</div>
-      <div class="hamburger-menu">
-        <div class="hamburger-icon" onclick="toggleMenu()">
-          <span></span>
-          <span></span>
-          <span></span>
+      <div class="hero-role"><span id="typewriter"></span></div>
+      <p class="hero-bio">Full stack developer based in Toronto, Canada. Building modern web applications with a passion for clean code, performant systems, and exceptional user experiences.</p>
+      <div class="location-chip"><span class="location-dot"></span>Toronto, Ontario · Available for opportunities</div>
+      <div class="hero-cta" style="margin-top:32px;">
+        <a href="#contact" class="btn btn-primary">Get in Touch</a>
+        <a href="#projects" class="btn btn-ghost">View Projects</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">4+</span>
+        <span class="stat-label">Years Frontend</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">2+</span>
+        <span class="stat-label">Years Backend</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Companies</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">6+</span>
+        <span class="stat-label">Projects</span>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      SCROLL
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">01 / about</div>
+    <h2 class="section-title reveal">Who I <span>Am</span></h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>Born in Nairobi, Kenya, and raised in Canada from age 15, I discovered my love for computers through a high school course that changed the direction of my life.</p>
+        <p>I went on to study at Seneca Polytechnic, earning an Honours Bachelor of Technology in Software Development — gaining deep expertise across C, C++, C#, Java, Python, and JavaScript along the way.</p>
+        <p>Beyond code, I'm passionate about One Piece (both manga and anime), the Dark Knight trilogy, and the beautiful game of chess. These creative pursuits inform how I approach problem-solving: strategically, patiently, and with an eye for narrative.</p>
+
+        <div class="terminal">
+          <div class="terminal-content">
+            <div><span class="prompt">$ </span>whoami</div>
+            <div class="output highlight">peter.gituma — full-stack-developer</div>
+            <div><span class="prompt">$ </span>location</div>
+            <div class="output">Toronto, Ontario, Canada 🇨🇦</div>
+            <div><span class="prompt">$ </span>education</div>
+            <div class="output highlight">Seneca Polytechnic · BSD · Oct 2024</div>
+            <div><span class="prompt">$ </span>status</div>
+            <div class="output" style="color: var(--cyan2)">● open to opportunities</div>
+          </div>
         </div>
-        <div class="menu-links">
-          <li><a href="#about" onclick="toggleMenu()">About</a></li>
-          <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
-          <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
-          <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+      </div>
+      <div class="about-cards">
+        <div class="info-card reveal">
+          <div class="info-card-label">Experience</div>
+          <div class="info-card-value">4+ Years Frontend Development</div>
+          <div class="info-card-sub">2+ Years Backend · 1+ Year Full Stack</div>
+        </div>
+        <div class="info-card reveal" style="transition-delay:0.1s">
+          <div class="info-card-label">Education</div>
+          <div class="info-card-value">Seneca Polytechnic</div>
+          <div class="info-card-sub">Honours B.Tech – Software Development</div>
+        </div>
+        <div class="info-card reveal" style="transition-delay:0.2s">
+          <div class="info-card-label">Origin</div>
+          <div class="info-card-value">Nairobi, Kenya → Toronto, Canada</div>
+          <div class="info-card-sub">Moved to Canada at age 15</div>
+        </div>
+        <div class="info-card reveal" style="transition-delay:0.3s">
+          <div class="info-card-label">Current Role</div>
+          <div class="info-card-value">Co-Founder @ Designurweb INC</div>
+          <div class="info-card-sub">Full Stack Developer · May 2024–Present</div>
         </div>
       </div>
-    </nav>
-    <section id="profile">
-      <div class="section__pic-container">
-        <img src="./assets/profile-pic.png" alt="Peter Gituma profile picture" />
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label">02 / skills</div>
+    <h2 class="section-title reveal">Tech <span>Stack</span></h2>
+    <div class="skills-wrapper">
+      <div class="reveal">
+        <div class="skill-group-title">// Programming Languages</div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">JavaScript</span><span class="skill-level">Experienced</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="92"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Python</span><span class="skill-level">Experienced</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="88"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">TypeScript</span><span class="skill-level">Intermediate</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="78"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">C / C++</span><span class="skill-level">Experienced</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="85"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">Java</span><span class="skill-level">Intermediate</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span class="skill-name">C#</span><span class="skill-level">Intermediate</span></div>
+          <div class="skill-bar-bg"><div class="skill-bar-fill" data-width="73"></div></div>
+        </div>
       </div>
-      <div class="section__text">
-        <p class="section__text__p1">Hello, I'm</p>
-        <h1 class="title">Peter Gituma</h1>
-        <p class="section__text__p2">Full Stack Developer</p>
-        <div class="btn-container">
-          <button
-            class="btn btn-color-2"
-            onclick="window.open('./assets/PeterGituma - Resume .pdf')"
-          >
+      <div class="reveal" style="transition-delay:0.2s">
+        <div class="skill-group-title">// Tools & Platforms</div>
+        <div class="tools-grid">
+          <span class="tool-chip">Git</span>
+          <span class="tool-chip">GitHub</span>
+          <span class="tool-chip">Azure</span>
+          <span class="tool-chip">AWS</span>
+          <span class="tool-chip">VS Code</span>
+          <span class="tool-chip">Visual Studio</span>
+          <span class="tool-chip">Android Studio</span>
+          <span class="tool-chip">Eclipse</span>
+          <span class="tool-chip">React</span>
+          <span class="tool-chip">Node.js</span>
+          <span class="tool-chip">REST APIs</span>
+          <span class="tool-chip">SQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-label">03 / experience</div>
+    <h2 class="section-title reveal">Work <span>History</span></h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-date">May 2024 — Present</div>
+          <div class="timeline-company">Designurweb INC</div>
+          <div class="timeline-role">Full Stack Developer &amp; Co-Founder</div>
+          <p class="timeline-desc">Co-founded a web development agency delivering full-stack solutions for clients. Leading product architecture, frontend development, and client relationship management.</p>
+          <div style="margin-top:16px;"><a href="#" class="project-link">Live Demo →</a></div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-date">Jan 2024 — Aug 2024</div>
+          <div class="timeline-company">Ontario Public Service</div>
+          <div class="timeline-role">Full Stack Web Developer Intern</div>
+          <p class="timeline-desc">Contributed to government digital services, building accessible and performant web applications serving citizens of Ontario. Worked across the full stack with modern frameworks.</p>
+          <div style="margin-top:16px;"><a href="#" class="project-link">Live Demo →</a></div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-date">Jan 2023 — Aug 2023</div>
+          <div class="timeline-company">Feedbacksession.io</div>
+          <div class="timeline-role">Full Stack Developer Intern</div>
+          <p class="timeline-desc">Developed features for a SaaS feedback management platform. Built responsive UI components, implemented API integrations, and improved overall application performance.</p>
+          <div style="margin-top:16px;"><a href="#" class="project-link">Live Demo →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-label">04 / projects</div>
+    <h2 class="section-title reveal">Recent <span>Work</span></h2>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-1.png" alt="Project 1" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">01</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project One</div>
+          <p class="project-desc">A full-stack web application built with modern technologies and a focus on user experience.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">Live Demo</a>
+            <a href="#" class="project-link">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-6.png" alt="Project 2" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">02</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project Two</div>
+          <p class="project-desc">A dynamic application leveraging cloud infrastructure and modern UI patterns.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">Live Demo</a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-3.png" alt="Project 3" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">03</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project Three</div>
+          <p class="project-desc">Built with performance and accessibility in mind for a seamless cross-platform experience.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">Live Demo</a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-4.png" alt="Project 4" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">04</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project Four</div>
+          <p class="project-desc">Designed with scalability in mind, using microservices architecture and CI/CD pipelines.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">Live Demo</a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-5.png" alt="Project 5" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">05</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project Five</div>
+          <p class="project-desc">An open source project hosted on GitHub, focused on developer tooling and productivity.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img-wrap">
+          <img src="https://petergitumamynewportfolio.vercel.app/assets/project-2.png" alt="Project 6" onerror="this.style.background='#040f18';this.src=''"/>
+          <div class="project-img-overlay"></div>
+          <div class="project-num">06</div>
+        </div>
+        <div class="project-body">
+          <div class="project-title">Project Six</div>
+          <p class="project-desc">A mobile-first application built with React and cloud-native backend services.</p>
+          <div class="project-links">
+            <a href="#" class="project-link">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label">05 / contact</div>
+    <h2 class="section-title reveal">Get In <span>Touch</span></h2>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <p>I'm currently open to new opportunities, freelance projects, and collaborations. Whether you have a question or just want to say hi — my inbox is always open.</p>
+        <div class="contact-links">
+          <a href="mailto:peter.l.gituma@gmail.com" class="contact-link">
+            <span class="contact-link-icon">✉</span>
+            Peter.l.Gituma@gmail.com
+          </a>
+          <a href="https://www.linkedin.com/in/peterlgituma/" target="_blank" class="contact-link">
+            <span class="contact-link-icon">in</span>
+            linkedin.com/in/peterlgituma
+          </a>
+          <a href="https://petergitumamynewportfolio.vercel.app/assets/profile-pic.png" class="contact-link">
+            <span class="contact-link-icon">↓</span>
             Download CV
-          </button>
-          <button class="btn btn-color-1" onclick="location.href='./#contact'">
-            Contact Info
-          </button>
-        </div>
-        <div id="socials-container">
-          <img
-            src="./assets/linkedin.png"
-            alt="My LinkedIn profile"
-            class="icon"
-            onclick="location.href='https://www.linkedin.com/in/peterlgituma/'"
-          />
-          <img
-            src="./assets/github.png"
-            alt="My Github profile"
-            class="icon"
-            onclick="location.href='https://github.com/PeterGituma'"
-          />
+          </a>
         </div>
       </div>
-    </section>
-    <section id="about">
-      <br>
-      <p class="section__text__p1">Get To Know More</p>
-      <h1 class="title">About Me</h1>
-      <div class="section-container">
-        <div class="section__pic-container">
-          <img
-            src="./assets/about-pic.png"
-            alt="Profile picture"
-            class="about-pic"
-          />
+      <div class="contact-form reveal" style="transition-delay:0.2s">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="Your name" autocomplete="off"/>
         </div>
-        <div class="about-details-container">
-          <div class="about-containers">
-            <div class="details-container">
-              <img
-                src="./assets/experience.png"
-                alt="Experience icon"
-                class="icon"
-              />
-              <h3>Experience</h3>
-              <p>4+ years Frontend Development</p>
-              <p>2+ years Backend Development</p>
-              <p>1+ years Full Stack Development</p>
-            </div>
-            <div class="details-container">
-              <img
-                src="./assets/education.png"
-                alt="Education icon"
-                class="icon"
-              />
-              <a href="https://www.senecapolytechnic.ca/programs/fulltime/BSD.html"><h3>Education</h3></a>
-              <a href="https://www.senecapolytechnic.ca/programs/fulltime/BSD.html"><h4>seneca Polytechnic</h4></a>
-         
-              <p>Honours Bachelor of Technology – Software Development (BSD)</p>
-            </div>
-          </div>
-          <div class="text-container">
-            <p>
-              My name is Peter Gituma. I was born in Nairobi, Kenya, and moved to Canada when I was about 15 years old. 
-              I attended high school in Canada, where I took a course in computer science that sparked my love for computers. 
-              Following my passion, I enrolled in Seneca Polytechnic, where I pursued a Bachelor’s Degree in Software Development. 
-              During my time at Seneca, I gained knowledge in a plethora of programming languages, including C, C++, C#, Java, Python,
-              and JavaScript. I will graduate in October 2024, and I am eagerly looking forward to the next chapter of my life as I 
-              begin my professional career.
-              <br>
-              <br>
-              In my free time, I enjoy spending quality moments with loved ones, playing basketball and chess, and engaging in similar 
-              activities. I am also an avid watcher of shows and movies. My favorite show is One Piece, and my favorite movies are the 
-              entire Dark Knight trilogy. When it comes to books, my favorite is the Bible, followed closely by the One Piece manga, 
-              which I keep up to date with.
-          </p>
-        
-          </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="your@email.com" autocomplete="off"/>
         </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Hello Peter, I'd like to..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="border:none;font-size:0.8rem;" onclick="handleSend(event)">Send Message →</button>
       </div>
+    </div>
+  </div>
+</section>
 
-    </section>
-    <br>
-    <br>
-    <section id="experience">
-      <p class="section__text__p1">Explore My</p>
-      <h1 class="title">Experience</h1>
-      <div class="experience-details-container">
-        <div class="about-containers">
-          <div class="details-container">
-            <h2 class="experience-sub-title">Programming languages</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>C</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>C++</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Python</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>JavaScript</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>TypeScript</h3>
-                  <p>Intermediate</p>
-                </div>
-              </article>
-              <article>                
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>C#</h3>
-                  <p>Intermediate/</p>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>                
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Java</h3>
-                  <p>Intermediate/</p>
-                  <p>Experienced</p>
-                </div>
-              </article>
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-logo">PG.DEV</span>
+      <span class="footer-copy">© 2025 Peter Gituma · Built with passion &amp; caffeine</span>
+      <span class="footer-copy" style="color:var(--cyan);font-size:0.6rem;">Toronto, Canada</span>
+    </div>
+  </div>
+</footer>
 
-            </div>
-          </div>
-          <div class="details-container">
-            <h2 class="experience-sub-title">Design, Cloud computing platform, IDE Tools:</h2>
-            <div class="article-container">
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Visual Studio Code</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Visual Studio</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Eclipse</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Git</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
+<script>
+// ========================
+// CURSOR
+// ========================
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = -100, my = -100, rx = -100, ry = -100;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  rx += (mx - rx) * 0.18;
+  ry += (my - ry) * 0.18;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button,.tool-chip,.project-card,.info-card,.contact-link').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+    cursor.style.background = 'var(--accent)';
+    cursorRing.style.transform = 'translate(-50%,-50%) scale(1.4)';
+    cursorRing.style.borderColor = 'var(--accent)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    cursor.style.background = 'var(--cyan)';
+    cursorRing.style.transform = 'translate(-50%,-50%) scale(1)';
+    cursorRing.style.borderColor = 'var(--cyan)';
+  });
+});
 
+// ========================
+// CANVAS PARTICLES
+// ========================
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], lines = [];
+function resizeCanvas() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>GitHub</h3>
-                  <p>Experienced</p>
-                </div>
-              </article>
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = (Math.random() - 0.5) * 0.35;
+    this.r = Math.random() * 2 + 0.5;
+    this.alpha = Math.random() * 0.7 + 0.3;
+    // Mix of cyan, purple, white
+    const c = Math.random();
+    if (c < 0.5) this.color = `rgba(56,217,255,${this.alpha})`;
+    else if (c < 0.8) this.color = `rgba(176,107,255,${this.alpha * 0.8})`;
+    else this.color = `rgba(255,255,255,${this.alpha * 0.5})`;
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
 
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Microsoft Azure</h3>
-                  <p>Intermediate/</p>
-                  <p>Experienced</p>
-                </div>
-              </article>
+for (let i = 0; i < 120; i++) particles.push(new Particle());
 
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>AWS</h3>
-                  <p>Intermediate/</p>
-                  <p>Experienced</p>
-                </div>
-              </article>
+function drawLines() {
+  const dist = 140;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i+1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < dist) {
+        const a = 0.22 * (1 - d/dist);
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(56,217,255,${a})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+    }
+  }
+}
 
-              <article>
-                <img
-                  src="./assets/checkmark.png"
-                  alt="Experience icon"
-                  class="icon"
-                />
-                <div>
-                  <h3>Android Studio</h3>
-                  <p>Intermediate/</p>
-                  <p>Experienced</p>
-                </div>
-              </article>
+// Mouse interaction
+let mouseX = -9999, mouseY = -9999;
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
+function drawMouseLines() {
+  particles.forEach(p => {
+    const dx = p.x - mouseX, dy = p.y - mouseY;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    if (d < 200) {
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(mouseX, mouseY);
+      ctx.strokeStyle = `rgba(160,255,234,${0.22 * (1-d/200)})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  });
+}
 
-            </div>
-          </div>
-        </div>
-    
-      </div>
+function animateCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawLines();
+  drawMouseLines();
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
 
-    </section>
+// ========================
+// TYPEWRITER
+// ========================
+const roles = ['Full Stack Developer', 'Frontend Engineer', 'Backend Developer', 'Problem Solver', 'Code Craftsman'];
+let ri = 0, ci = 0, del = false;
+const tw = document.getElementById('typewriter');
+function typewriter() {
+  const current = roles[ri];
+  if (!del) {
+    tw.textContent = current.slice(0, ci+1);
+    ci++;
+    if (ci === current.length) { del = true; setTimeout(typewriter, 2000); return; }
+    setTimeout(typewriter, 80);
+  } else {
+    tw.textContent = current.slice(0, ci-1);
+    ci--;
+    if (ci === 0) { del = false; ri = (ri+1) % roles.length; }
+    setTimeout(typewriter, del ? 40 : 80);
+  }
+}
+typewriter();
 
-    <section id="projects">
+// ========================
+// NAVBAR SCROLL
+// ========================
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
 
-      <p class="section__text__p1">Browse My Recent</p>
-      <h1 class="title">Projects</h1>
-    
-      <div class="projects-scroll-container">
-        <div class="about-containers scroll-wrapper">
-          <!-- Project 1 -->
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img src="./assets/project-1.png" alt="Project 1" class="project-img" />
-            </div>
-            <h2 class="experience-sub-title project-title">Project One</h2>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://assignment6-bti425.vercel.app/'">
-                Live Demo
-              </button>
-            </div>
-          </div>
+// ========================
+// SCROLL REVEAL
+// ========================
+const revealEls = document.querySelectorAll('.reveal');
+const timelineItems = document.querySelectorAll('.timeline-item');
+const projectCards = document.querySelectorAll('.project-card');
 
-                    <!-- Project 6 -->
-                    <div class="details-container color-container">
-                      <div class="article-container">
-                        <img src="./assets/project-6.png" alt="Project 6" class="project-img" />
-                      </div>
-                      <h2 class="experience-sub-title project-title">Project Two</h2>
-                      <div class="btn-container">
-                        <button class="btn btn-color-2 project-btn" onclick="location.href='https://thesugarbabe.online/'">
-                          Live Demo
-                        </button>
-                      </div>
-                    </div>
-   
-    
-          <!-- Project 3 -->
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img src="./assets/project-3.png" alt="Project 3" class="project-img" />
-            </div>
-            <h2 class="experience-sub-title project-title">Project Three</h2>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://feedbacksession.io/'">
-                Live Demo
-              </button>
-            </div>
-          </div>
-    
-          <!-- Project 4 -->
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img src="./assets/project-4.png" alt="Project 4" class="project-img" />
-            </div>
-            <h2 class="experience-sub-title project-title">Project Four</h2>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://www.fedhealthhockeypool.com/'">
-                Live Demo
-              </button>
-            </div>
-          </div>
-    
-          <!-- Project 5 -->
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img src="./assets/project-5.png" alt="Project 5" class="project-img" />
-            </div>
-            <h2 class="experience-sub-title project-title">Project Five</h2>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/PeterGituma/AutomatedTest_April18th/tree/main/login-playwright'">
-                Github
-              </button>
-            </div>
-          </div>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-           
-          <!-- Project 2 -->
-          <div class="details-container color-container">
-            <div class="article-container">
-              <img src="./assets/project-2.png" alt="Project 2" class="project-img" />
-            </div>
-            <h2 class="experience-sub-title project-title">Project Six</h2>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://github.com/PeterGituma/Pythons-s-Connect-4'">
-                Github
-              </button>
-            </div>
-          </div>
-    
+revealEls.forEach(el => observer.observe(el));
+timelineItems.forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.15}s`;
+  observer.observe(el);
+});
 
-        </div>
-      </div>
-    </section>
-    
+// PROJECT CARDS with stagger
+const pcObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = Array.from(projectCards).indexOf(e.target);
+      setTimeout(() => e.target.classList.add('visible'), idx * 80);
+      pcObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+projectCards.forEach(c => pcObserver.observe(c));
 
-    <section id="additional-experience">
-      <p class="section__text__p1">More About My Work</p>
-      <h1 class="title">Professional Experience</h1>
-      <div class="experience-details-container">
-        <div class="about-containers">
-          
-          <div class="details-container">
-            <img src="./assets/ops-logo.png" alt="OPS Logo" class="company-logo"/>
-            <h2 class="experience-sub-title">Ontario Public Service</h2>
-            <p><strong>Full Stack Web Developer Intern</strong> | Jan 2024 – Aug 2024</p>
+// ========================
+// SKILL BARS
+// ========================
+const skillBars = document.querySelectorAll('.skill-bar-fill');
+const barObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.width = e.target.dataset.width + '%';
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+skillBars.forEach(b => barObserver.observe(b));
 
-            <br>
-            <br>
-            <br>
+// ========================
+// CONTACT FORM
+// ========================
+function handleSend(e) {
+  e.preventDefault();
+  const btn = e.target;
+  btn.textContent = 'Sending...';
+  setTimeout(() => {
+    btn.textContent = 'Message Sent ✓';
+    btn.style.background = 'var(--cyan2)';
+    setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; }, 3000);
+  }, 1200);
+}
 
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://www.ontario.ca/page/ministry-public-and-business-service-delivery-and-procurement'">
-                  Live Demo
-              </button>
-          </div>
-          </div>
-    
-          <div class="details-container">
-            <img src="./assets/logo-dark.f4f3e34d6c630c19909f5df7c8e81800.svg" alt="Feedbacksession.io Logo" class="company-logo"/>
-            <h2 class="experience-sub-title">Feedbacksession.io</h2>
-            <br>
-            <br>
-            <p><strong>Full Stack Developer Intern</strong> | Jan 2023 – Aug 2023</p>
-            <br>
-            <br>
-            <br>
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://feedbacksession.io/'">
-                  Live Demo
-              </button>
-          </div>
-          </div>
-    
-          <div class="details-container">
-            <img src="./assets/designurweb-logo.png" alt="Designurweb Logo" class="company-logo"/>
-            <h2 class="experience-sub-title">Designurweb INC</h2>
-            <br>
-            <br>
-            <p><strong>Full Stack Developer & Co-Founder</strong> | May 2024 – Present</p>
-            <br>
-            <br>
-            <br>
-
-            <div class="btn-container">
-              <button class="btn btn-color-2 project-btn" onclick="location.href='https://designurweb.com/'">
-                  Live Demo
-              </button>
-          </div>
-          </div>
-    
-        </div>
-      </div>
-    </section>
-    
-    
-  
-
-    <section id="contact">
-      <p class="section__text__p1">Get in Touch</p>
-      <h1 class="title">Contact Me</h1>
-      <div class="contact-info-upper-container">
-        <div class="contact-info-container">
-          <img
-            src="./assets/email.png"
-            alt="Email icon"
-            class="icon contact-icon email-icon"
-          />
-          <p><a href="mailto:peter.l.gituma@gmail.com">Peter.l.Gituma@gmail.com</a></p>
-        </div>
-        <div class="contact-info-container">
-          <img
-            src="./assets/linkedin.png"
-            alt="LinkedIn icon"
-            class="icon contact-icon"
-          />
-          <p><a href="https://www.linkedin.com/in/peterlgituma/">LinkedIn</a></p>
-        </div>
-      </div>
-    </section>
-    <footer>
-      <nav>
-        <div class="nav-links-container">
-          <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-      </nav>
-     
-    </footer>
-    <script src="script.js"></script>
-  </body>
+// ========================
+// HERO ENTRANCE
+// ========================
+document.addEventListener('DOMContentLoaded', () => {
+  const heroContent = document.querySelector('.hero-content');
+  heroContent.style.opacity = '0';
+  heroContent.style.transform = 'translateY(30px)';
+  setTimeout(() => {
+    heroContent.style.transition = 'all 1s ease';
+    heroContent.style.opacity = '1';
+    heroContent.style.transform = 'translateY(0)';
+  }, 200);
+});
+</script>
+</body>
 </html>
-
-
-
-
